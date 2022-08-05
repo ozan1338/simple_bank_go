@@ -20,7 +20,7 @@ jobs:
           MYSQL_USERNAME: root
           MYSQL_DATABSE: simple_bank
         ports:
-          - 3307:3306
+          - 3307:3307
 
     steps:
 
