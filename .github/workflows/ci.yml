@@ -21,7 +21,7 @@ jobs:
           MYSQL_DATABSE: simple_bank
         ports:
           # Maps tcp port 3307 on service container to the host
-          - 3307:3306
+          - 3306:3307
 
     steps:
 
