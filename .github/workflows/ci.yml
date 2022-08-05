@@ -21,7 +21,7 @@ jobs:
           MYSQL_DATABSE: simple_bank
         ports:
           # Maps tcp port 3307 on service container to the host
-          - 3306:3307
+          - 3306:3306
 
     steps:
 
@@ -41,7 +41,7 @@ jobs:
         which migrate
 
     - name: Run migrations
-      run: migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up  
+      run: migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/simple_bank" -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
