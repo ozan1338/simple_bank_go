@@ -35,7 +35,10 @@ jobs:
       run: 
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate.linux-amd46 /usr/bin/migrate
-        which migrate  
+        which migrate
+
+    - name: Install golang-migrate
+      run: migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
