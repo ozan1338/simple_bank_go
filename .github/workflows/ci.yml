@@ -20,7 +20,7 @@ jobs:
           MYSQL_USERNAME: root
           MYSQL_DATABASE: simple_bank
         ports:
-          - 3307/tcp:3306/tcp
+          - 3306/tcp
         # options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
@@ -46,7 +46,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database mysql://root:secret@tcp\(127.0.0.1:3307\)/simple_bank -verbose up  
+        migrate -path db/migration -database mysql://root:secret@tcp\(127.0.0.1:3306\)/simple_bank -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
