@@ -35,13 +35,14 @@ jobs:
 
     - name: Install golang-migrate
       run: |
-        ip addr
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
 
     - name: Run migrations
-      run: migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up  
+      run: |
+        traceroute -p 3307 localhost
+        migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
