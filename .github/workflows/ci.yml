@@ -20,7 +20,7 @@ jobs:
           MYSQL_USERNAME: root
           MYSQL_DATABSE: simple_bank
         ports:
-          - 3306:3307
+          - 3307:3306
 
     steps:
 
@@ -35,14 +35,14 @@ jobs:
 
     - name: Install golang-migrate
       run: |
+        ip addr
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
 
     - name: Run migrations
-      run: |
-        traceroute -p 3307 localhost
-        migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up  
+      run:
+        migrate -path db/migration -database "mysql://root:secret@tcp(127.0.0.1:3307)/simple_bank" -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
