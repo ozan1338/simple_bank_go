@@ -16,8 +16,7 @@ jobs:
       mysql: 
         image: mysql:latest
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: simple_bank
         ports:
           - 3306/tcp
@@ -46,7 +45,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database mysql://root:password@tcp\(127.0.0.1:3306\)/simple_bank -verbose up  
+        migrate -path db/migration -database mysql://root:@tcp\(127.0.0.1:3306\)/simple_bank -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
