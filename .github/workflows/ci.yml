@@ -42,7 +42,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database mysql://root:secret@tcp(127.0.0.1:3307)/simple_banks -verbose up  
+        migrate -path db/migration -database mysql://root:secret@tcp\(127.0.0.1:3307\)/simple_bank -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
