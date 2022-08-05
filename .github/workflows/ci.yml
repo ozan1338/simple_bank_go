@@ -33,6 +33,9 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v3
 
+    - name: Start MySQL service
+      run: sudo systemctl start mysql
+      
     - name: Install golang-migrate
       run: |
         ip addr
