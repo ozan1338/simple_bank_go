@@ -16,7 +16,7 @@ jobs:
       mysql: 
         image: mysql:latest
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: simple_bank
           MYSQL_ROOT_PASSWORD: nopassword
         ports:
