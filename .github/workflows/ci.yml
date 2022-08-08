@@ -37,7 +37,9 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Start MySQL service
-      run: sudo systemctl start mysql
+      run: |
+        sudo systemctl start mysql
+        mysql -e 'CREATE DATABASE simple_bank;' -uroot -proot 
       
     - name: Install golang-migrate
       run: |
