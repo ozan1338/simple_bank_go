@@ -20,7 +20,7 @@ jobs:
           MYSQL_DATABASE: simple_bank
           MYSQL_ROOT_PASSWORD: nopassword
         ports:
-          - 3307/tcp
+          - 3306/tcp
         # options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
@@ -45,7 +45,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up  
+        migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3306)/simple_bank" -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
