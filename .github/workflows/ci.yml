@@ -18,6 +18,7 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: simple_bank
+          MYSQL_ROOT_HOST: test
           MYSQL_ROOT_PASSWORD: nopassword
           MYSQL_USER: test
         ports:
@@ -40,7 +41,6 @@ jobs:
       
     - name: Install golang-migrate
       run: |
-        ip addr
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
