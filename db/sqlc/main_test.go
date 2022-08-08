@@ -14,7 +14,7 @@ var testDb *sql.DB
 
 func TestMain(m *testing.M) {
 	var err error
-	testDb, err = sql.Open("mysql", "root:secret@tcp(localhost:3307)/simple_bank?parseTime=true")
+	testDb, err = sql.Open("mysql", "root:root@tcp(localhost:3307)/simple_bank?parseTime=true")
 
 	if err != nil {
 		log.Fatal("can't connect db: ", err)
