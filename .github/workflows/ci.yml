@@ -49,7 +49,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database "mysql://root:root@tcp(localhost:3307)/simple_bank" -verbose up  
+        migrate -path db/migration -database "mysql://root:root@tcp(localhost:3306)/simple_bank" -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
