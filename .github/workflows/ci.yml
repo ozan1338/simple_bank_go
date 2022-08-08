@@ -19,6 +19,7 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: simple_bank
           MYSQL_ROOT_PASSWORD: nopassword
+          MYSQL_USER: test
         ports:
           - 3306/tcp
         # options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -46,7 +47,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database mysql://root:nopassword@tcp\(127.0.0.1:3306\)/simple_bank -verbose up  
+        migrate -path db/migration -database mysql://test:nopassword@tcp\(127.0.0.1:3306\)/simple_bank -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
