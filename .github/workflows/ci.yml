@@ -46,7 +46,7 @@ jobs:
 
     - name: Run migrations
       run:
-        migrate -path db/migration -database mysql://root:nopassword@tcp\(localhost:3306\)/simple_bank -verbose up  
+        migrate -path db/migration -database mysql://root:nopassword@tcp\(127.0.0.1:3306\)/simple_bank -verbose up  
 
     - name: Test
       run: go test -v -cover ./...
