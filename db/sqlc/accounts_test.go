@@ -27,7 +27,7 @@ func TestCreateAccount(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
-	account,err := testQueries.GetAccount(context.Background(), 10)
+	account,err := testQueries.GetAccount(context.Background(), 1)
 	
 	// if err == nil {
 	// 	// fmt.Print(account)

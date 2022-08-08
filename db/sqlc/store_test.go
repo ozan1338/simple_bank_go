@@ -5,11 +5,20 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ozan1338/util"
 	"github.com/stretchr/testify/require"
 )
 
 func TestTransferTX(t *testing.T) {
 	store := NewStore(testDb)
+
+	for i:=0; i < 10; i++ {
+		testQueries.CreateAccount(context.Background(), CreateAccountParams{
+			Owner: util.RandomOwner(),
+			Balance: util.RandomMoney(),
+			Currency: util.RandomCurrency(),
+		})
+	}
 
 	// run n concurrent transfer transaction
 	n := 2

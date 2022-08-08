@@ -20,7 +20,7 @@ func TestCreateEntries(t *testing.T) {
 }
 
 func TestGetEntries(t *testing.T) {
-	entries,err := testQueries.GetEntries(context.Background(), 3)
+	entries,err := testQueries.GetEntries(context.Background(), 1)
 
 	require.NoError(t,err)
 	require.NotEmpty(t,entries)
@@ -38,7 +38,7 @@ func TestUpdateEntries(t *testing.T) {
 }
 
 func TestDeleteEntries(t *testing.T) {
-	_, err := testQueries.DeleteEntries(context.Background(), 5)
+	_, err := testQueries.DeleteEntries(context.Background(), 1)
 
 	require.NoError(t,err)
 }
