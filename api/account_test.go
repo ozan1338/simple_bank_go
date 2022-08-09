@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -136,4 +138,80 @@ func requireBodyMatchAccount (t *testing.T, body *bytes.Buffer, account db.Accou
 
 	require.NoError(t,err)
 	require.Equal(t, account, gotAccount)
+}
+
+type accountParams struct {
+	Owner    string `json:"owner"`
+	Currency  string  `json:"currency"`
+	Balance int64 `json:balance`
+}
+
+func TestCreateAccount(t *testing.T) {
+
+	account := randomAccount()
+	// accountTestArg := accountParams{
+	// 	Owner: account.Owner,
+	// 	Currency: account.Currency,
+	// 	Balance: 0,
+	// }
+
+	testCase := []struct{
+		name string
+		account accountParams
+		buildStubs func(store *mockdb.MockStore)
+		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "BadRequest",
+			account: accountParams{
+				Owner: account.Owner,
+				Currency: "IDR",
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+				CreateAccount(gomock.Any(), gomock.Any()).
+				Times(0)
+				store.EXPECT().
+				GetLastInsertId(gomock.Any()).
+				Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+				// requireBodyMatchAccount(t,recorder.Body,account)
+			},
+		},
+	}
+
+	for i := range testCase{
+		tc := testCase[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+
+			defer ctrl.Finish()
+
+			fmt.Println(tc)
+
+			//setData
+			data := url.Values{}
+			data.Set("owner", tc.account.Owner)
+			data.Set("currency", tc.account.Currency)
+
+			store := mockdb.NewMockStore(ctrl)
+			//build stubs
+			tc.buildStubs(store)
+			
+			//start test server
+			server := NewServer(store)
+			recorder := httptest.NewRecorder()
+
+			url := fmt.Sprintf("/accounts")
+			request,err := http.NewRequest(http.MethodPost, url, strings.NewReader(data.Encode()))
+			require.NoError(t, err)
+
+			server.router.ServeHTTP(recorder, request)
+			// check response
+			tc.checkResponse(t, recorder)
+		})
+	}
 }
