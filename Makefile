@@ -25,4 +25,7 @@ runbashmysql:
 runmysql:
 	mysql -u root -p
 
+runmockgenreflectmode:
+	mockgen --build_flags=--mod=mod -package mockdb  -destination db/mock/store.go github.com/ozan1338/db/sqlc Store
+
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test
