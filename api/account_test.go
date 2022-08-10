@@ -215,3 +215,124 @@ func TestCreateAccount(t *testing.T) {
 		})
 	}
 }
+
+type testlistAccountRequest struct {
+	page_size int32 
+	page_id int32 
+}
+
+type tesListParamsss struct {
+	Limit int32
+	Offset int32
+}
+
+func TestListAccount(t *testing.T) {
+	account := make([]db.Account,5)
+	for i:=0 ; i < 5 ; i++ {
+		account[i] = randomAccount()
+	}
+
+	accounts := []db.Account{}
+
+	testCase := []struct{
+		name string
+		page tesListParamsss
+		buildStubs func(store *mockdb.MockStore)
+		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "BadRequest",
+			page: tesListParamsss{
+				Offset: 0,
+				Limit: 1,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				
+				store.EXPECT().ListAccount(gomock.Any(), gomock.Any()).Times(0)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "OK",
+			page: tesListParamsss{
+				Limit: 5,
+				Offset: 1,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				// pageList := tesListParamsss{
+				// 	Limit: 5,
+				// 	Offset: 0,
+				// }
+				// fmt.Println("NEXT>>>",account)
+				store.EXPECT().ListAccount(gomock.Any(), gomock.Any()).Times(1).Return(account, nil)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+		{
+			name: "InternalError",
+			page: tesListParamsss{
+				Limit: 5,
+				Offset: 1,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				// pageList := tesListParamsss{
+				// 	Limit: 5,
+				// 	Offset: 0,
+				// }
+				// fmt.Println("NEXT>>>",account)
+				store.EXPECT().ListAccount(gomock.Any(), gomock.Any()).Times(1).Return(accounts, sql.ErrConnDone)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "NotFound",
+			page: tesListParamsss{
+				Limit: 5,
+				Offset: 100,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				// pageList := tesListParamsss{
+				// 	Limit: 5,
+				// 	Offset: 0,
+				// }
+				// fmt.Println("NEXT>>>",account)
+				store.EXPECT().ListAccount(gomock.Any(), gomock.Any()).Times(1).Return(accounts, sql.ErrNoRows)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+	}
+
+	for i := range testCase {
+		tc := testCase[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			//build stubs
+			tc.buildStubs(store)
+			
+			//start test server
+			server := NewServer(store)
+			recorder := httptest.NewRecorder()
+
+			url := fmt.Sprintf("/accounts?page_id=%d&page_size=%d",tc.page.Offset,tc.page.Limit)
+			request,err := http.NewRequest(http.MethodGet, url, nil)
+			require.NoError(t, err)
+
+			server.router.ServeHTTP(recorder, request)
+			// check response
+			tc.checkResponse(t, recorder)
+		})
+	}
+}
