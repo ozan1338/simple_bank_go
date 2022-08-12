@@ -18,10 +18,17 @@ func NewServer(store db.Store) *Server {
 	}
 	router := gin.Default()
 
+	// if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+	// 	v.RegisterValidator("currency", validCurrency)
+	// }
+
 	//add routes to routes
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccountById)
 	router.GET("/accounts", server.listAccount)
+
+	
+	router.POST("/transfer", server.transferApi)
 
 	server.router = router
 
