@@ -8,10 +8,10 @@ dropdb:
 	docker exec -it mysql_docker dropdb --username=root --owner=root simple_bank
 
 migrateup:
-	migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose up
+	migrate -path db/migration -database "mysql://root:root@tcp(localhost:3307)/simple_bank" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "mysql://root:secret@tcp(localhost:3307)/simple_bank" -verbose down
+	migrate -path db/migration -database "mysql://root:root@tcp(localhost:3307)/simple_bank" -verbose down
 
 sqlc:
 	sqlc generate

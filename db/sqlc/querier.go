@@ -14,6 +14,7 @@ type Querier interface {
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (sql.Result, error)
 	CreateEntries(ctx context.Context, arg CreateEntriesParams) (sql.Result, error)
 	CreateTransfer(ctx context.Context, arg CreateTransferParams) (sql.Result, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (sql.Result, error)
 	DeleteAccount(ctx context.Context, id int64) (sql.Result, error)
 	DeleteEntries(ctx context.Context, id int64) (sql.Result, error)
 	DeleteTransfer(ctx context.Context, id int64) (sql.Result, error)
@@ -22,12 +23,15 @@ type Querier interface {
 	GetEntries(ctx context.Context, id int64) (Entry, error)
 	GetLastInsertId(ctx context.Context) (int64, error)
 	GetTransfer(ctx context.Context, id int64) (Transfer, error)
+	GetUser(ctx context.Context, username string) (User, error)
 	ListAccount(ctx context.Context, arg ListAccountParams) ([]Account, error)
 	ListEntries(ctx context.Context) ([]Entry, error)
 	ListTransfer(ctx context.Context) ([]Transfer, error)
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (sql.Result, error)
 	UpdateEntries(ctx context.Context, arg UpdateEntriesParams) (sql.Result, error)
 	UpdateTransfer(ctx context.Context, arg UpdateTransferParams) (sql.Result, error)
+	UserExist(ctx context.Context, username string) (bool, error)
+	UserMoreThanOne(ctx context.Context, username string) (int64, error)
 }
 
 var _ Querier = (*Queries)(nil)

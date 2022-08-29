@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	db "github.com/ozan1338/db/sqlc"
 )
 
@@ -20,6 +21,10 @@ type accountStruct struct {
 	Owner string `json:"owner"`
 	Balance  int64  `json:"balance"`
 	Currency string `json:"currency"`
+}
+
+type errorRes struct {
+	Error string
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {
@@ -37,7 +42,27 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		Balance: 0,
 	}
 
-	_, err := server.store.CreateAccount(ctx, arg)
+	userExist,err := server.store.UserExist(ctx, arg.Owner)
+
+	if !userExist {
+		errorRess := errorRes{
+			Error: "User Doesn't Exist",
+		}
+		ctx.JSON(http.StatusForbidden, errorRess)
+		return
+	}
+
+	userMoreThanOne, err := server.store.UserMoreThanOne(ctx, arg.Owner)
+	
+	if userMoreThanOne > 1 {
+		errorRess := errorRes{
+			Error: "Username Already Exist",
+		}
+		ctx.JSON(http.StatusForbidden, errorRess)
+		return
+	}
+
+	_, err = server.store.CreateAccount(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -45,6 +70,14 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	
 	accountId,err := server.store.GetLastInsertId(ctx)
 	if err != nil {
+		//HOW TO HANDLE DATABASE ERROR
+		// if mySqlErr, ok := err.(*mysql.MySQLError); ok {
+		// 	switch mySqlErr.Error() {
+		// 	case "foreign_key_violation", "unique_violation":
+		// 		ctx.JSON(http.StatusForbidden, errorResponse(err))
+		// 		return
+		// 	}
+		// }
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
