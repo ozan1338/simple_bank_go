@@ -18,6 +18,10 @@ UPDATE entries
 SET amount = ?
 WHERE id = ?;
 
+-- name: GetIdEntries :one
+SELECT * FROM entries
+LIMIT 1;
+
 -- name: DeleteEntries :execresult
 DELETE FROM entries
 WHERE id = ?;

@@ -20,7 +20,8 @@ func TestCreateEntries(t *testing.T) {
 }
 
 func TestGetEntries(t *testing.T) {
-	entries,err := testQueries.GetEntries(context.Background(), 1)
+	entry,err := testQueries.GetIdEntries(context.Background())
+	entries,err := testQueries.GetEntries(context.Background(), entry.ID)
 
 	require.NoError(t,err)
 	require.NotEmpty(t,entries)

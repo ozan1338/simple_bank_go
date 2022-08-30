@@ -21,6 +21,7 @@ type Querier interface {
 	GetAccount(ctx context.Context, id int64) (Account, error)
 	GetAccountForUpdate(ctx context.Context, id int64) (Account, error)
 	GetEntries(ctx context.Context, id int64) (Entry, error)
+	GetIdEntries(ctx context.Context) (Entry, error)
 	GetLastInsertId(ctx context.Context) (int64, error)
 	GetTransfer(ctx context.Context, id int64) (Transfer, error)
 	GetUser(ctx context.Context, username string) (User, error)

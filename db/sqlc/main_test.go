@@ -20,7 +20,7 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot load configuration file: ",err)
 	}
 
-	testDb, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/simple_bank?parseTime=true")
+	testDb, err = sql.Open("mysql", "root:root@tcp(localhost:3307)/simple_bank?parseTime=true")
 
 	if err != nil {
 		log.Fatal("can't connect db: ", err)
