@@ -96,6 +96,21 @@ func (mr *MockStoreMockRecorder) CreateTransfer(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTransfer", reflect.TypeOf((*MockStore)(nil).CreateTransfer), arg0, arg1)
 }
 
+// CreateUser mocks base method.
+func (m *MockStore) CreateUser(arg0 context.Context, arg1 db.CreateUserParams) (sql.Result, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUser", arg0, arg1)
+	ret0, _ := ret[0].(sql.Result)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateUser indicates an expected call of CreateUser.
+func (mr *MockStoreMockRecorder) CreateUser(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockStore)(nil).CreateUser), arg0, arg1)
+}
+
 // DeleteAccount mocks base method.
 func (m *MockStore) DeleteAccount(arg0 context.Context, arg1 int64) (sql.Result, error) {
 	m.ctrl.T.Helper()
@@ -186,6 +201,21 @@ func (mr *MockStoreMockRecorder) GetEntries(arg0, arg1 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntries", reflect.TypeOf((*MockStore)(nil).GetEntries), arg0, arg1)
 }
 
+// GetIdEntries mocks base method.
+func (m *MockStore) GetIdEntries(arg0 context.Context) (db.Entry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetIdEntries", arg0)
+	ret0, _ := ret[0].(db.Entry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetIdEntries indicates an expected call of GetIdEntries.
+func (mr *MockStoreMockRecorder) GetIdEntries(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIdEntries", reflect.TypeOf((*MockStore)(nil).GetIdEntries), arg0)
+}
+
 // GetLastInsertId mocks base method.
 func (m *MockStore) GetLastInsertId(arg0 context.Context) (int64, error) {
 	m.ctrl.T.Helper()
@@ -214,6 +244,21 @@ func (m *MockStore) GetTransfer(arg0 context.Context, arg1 int64) (db.Transfer, 
 func (mr *MockStoreMockRecorder) GetTransfer(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransfer", reflect.TypeOf((*MockStore)(nil).GetTransfer), arg0, arg1)
+}
+
+// GetUser mocks base method.
+func (m *MockStore) GetUser(arg0 context.Context, arg1 string) (db.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUser", arg0, arg1)
+	ret0, _ := ret[0].(db.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUser indicates an expected call of GetUser.
+func (mr *MockStoreMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockStore)(nil).GetUser), arg0, arg1)
 }
 
 // ListAccount mocks base method.
@@ -319,4 +364,34 @@ func (m *MockStore) UpdateTransfer(arg0 context.Context, arg1 db.UpdateTransferP
 func (mr *MockStoreMockRecorder) UpdateTransfer(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTransfer", reflect.TypeOf((*MockStore)(nil).UpdateTransfer), arg0, arg1)
+}
+
+// UserExist mocks base method.
+func (m *MockStore) UserExist(arg0 context.Context, arg1 string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserExist", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UserExist indicates an expected call of UserExist.
+func (mr *MockStoreMockRecorder) UserExist(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserExist", reflect.TypeOf((*MockStore)(nil).UserExist), arg0, arg1)
+}
+
+// UserMoreThanOne mocks base method.
+func (m *MockStore) UserMoreThanOne(arg0 context.Context, arg1 string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserMoreThanOne", arg0, arg1)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UserMoreThanOne indicates an expected call of UserMoreThanOne.
+func (mr *MockStoreMockRecorder) UserMoreThanOne(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserMoreThanOne", reflect.TypeOf((*MockStore)(nil).UserMoreThanOne), arg0, arg1)
 }
