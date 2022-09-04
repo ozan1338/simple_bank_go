@@ -20,11 +20,13 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot load configuration file: ",err)
 	}
 
-	if(config.DBLOCAL) {
-		testDb, err = sql.Open(config.DBDrvier, config.DBSource)
-	} else {
-		testDb, err = sql.Open(config.DBDrvier, config.DBSoureTesting)
-	}
+	testDb, err = sql.Open(config.DBDrvier, config.DBSoureTesting)
+
+	// if(config.DBLOCAL) {
+	// 	testDb, err = sql.Open(config.DBDrvier, config.DBSource)
+	// } else {
+	// 	testDb, err = sql.Open(config.DBDrvier, config.DBSoureTesting)
+	// }
 
 
 	if err != nil {
