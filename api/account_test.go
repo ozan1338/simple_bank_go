@@ -8,10 +8,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	mockdb "github.com/ozan1338/db/mock"
 	db "github.com/ozan1338/db/sqlc"
@@ -157,15 +156,16 @@ func TestCreateAccount(t *testing.T) {
 
 	testCase := []struct{
 		name string
-		account accountParams
+		body gin.H
 		buildStubs func(store *mockdb.MockStore)
-		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
+		checkResponse func(recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name: "BadRequest",
-			account: accountParams{
-				Owner: account.Owner,
-				Currency: "IDR",
+			name: "Invalid Currency",
+			body: gin.H{
+				"owner": account.Owner,
+				"currency": "invalid",
+				"balance": account.Balance,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -175,9 +175,37 @@ func TestCreateAccount(t *testing.T) {
 				GetLastInsertId(gomock.Any()).
 				Times(0)
 			},
-			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
 				// requireBodyMatchAccount(t,recorder.Body,account)
+			},
+		},
+		{
+			name: "User Doesnt Exist",
+			body: gin.H{
+				"owner": account.Owner,
+				"currency": account.Currency,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				arg := db.CreateAccountParams{
+					Owner:    account.Owner,
+					Currency: account.Currency,
+					Balance:  0,
+				}
+				store.EXPECT().UserExist(gomock.Any(), gomock.Eq(arg.Owner)).Times(1)
+				store.EXPECT().
+				CreateAccount(gomock.Any(), gomock.Eq(arg)).
+				Times(0)
+				// store.EXPECT().
+				// GetLastInsertId(gomock.Any()).
+				// Times(1).Return(account.ID, nil)
+			},
+			// checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+			// 	require.Equal(t, http.StatusBadRequest, recorder.Code)
+			// 	// requireBodyMatchAccount(t,recorder.Body,account)
+			// },
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusForbidden, recorder.Code)
 			},
 		},
 	}
@@ -190,12 +218,7 @@ func TestCreateAccount(t *testing.T) {
 
 			defer ctrl.Finish()
 
-			fmt.Println(tc)
-
-			//setData
-			data := url.Values{}
-			data.Set("owner", tc.account.Owner)
-			data.Set("currency", tc.account.Currency)
+			// fmt.Println(tc)
 
 			store := mockdb.NewMockStore(ctrl)
 			//build stubs
@@ -205,13 +228,17 @@ func TestCreateAccount(t *testing.T) {
 			server := NewServer(store)
 			recorder := httptest.NewRecorder()
 
+			//Marshal body data to JSON
+			data, err := json.Marshal(tc.body)
+			require.NoError(t, err)
+
 			url := fmt.Sprintf("/accounts")
-			request,err := http.NewRequest(http.MethodPost, url, strings.NewReader(data.Encode()))
+			request,err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
 			require.NoError(t, err)
 
 			server.router.ServeHTTP(recorder, request)
 			// check response
-			tc.checkResponse(t, recorder)
+			tc.checkResponse(recorder)
 		})
 	}
 }

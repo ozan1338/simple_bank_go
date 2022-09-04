@@ -9,6 +9,7 @@ type Config struct {
 	DBSource string `mapstructure:"DB_SOURCE"`
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 	DBSoureTesting string `mapstructure:"DB_SOURCE_TEST"`
+	DBLOCAL bool `mapstructure:"DB_LOCAL"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

@@ -15,12 +15,17 @@ var testDb *sql.DB
 
 func TestMain(m *testing.M) {
 	// var err error
-	_,err := util.LoadConfig("../../")
+	config,err := util.LoadConfig("../../")
 	if err != nil {
 		log.Fatal("cannot load configuration file: ",err)
 	}
 
-	testDb, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/simple_bank?parseTime=true")
+	if(config.DBLOCAL) {
+		testDb, err = sql.Open(config.DBDrvier, config.DBSource)
+	} else {
+		testDb, err = sql.Open(config.DBDrvier, config.DBSoureTesting)
+	}
+
 
 	if err != nil {
 		log.Fatal("can't connect db: ", err)
