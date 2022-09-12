@@ -75,17 +75,23 @@ func TestListAccount(t *testing.T) {
 		require.NoError(t,err)
 	}
 
+	lastInsertedID,err := testQueries.GetLastInsertId(context.Background())
+
+	LastUserInserted, err := testQueries.GetAccount(context.Background(), lastInsertedID)
+
 	arg := ListAccountParams{
+		Owner: LastUserInserted.Owner,
 		Limit: 5,
-		Offset: 5,
+		Offset: 0,
 	}
 
 	accounts, err := testQueries.ListAccount(context.Background(),arg)
 
 	require.NoError(t, err)
-	require.Len(t, accounts, 5)
+	require.NotEmpty(t, accounts)
 
 	for _, account := range accounts {
 		require.NotEmpty(t,account)
+		require.Equal(t, LastUserInserted.Owner, account.Owner)
 	}
 }

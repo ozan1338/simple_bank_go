@@ -2,17 +2,18 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	db "github.com/ozan1338/db/sqlc"
+	"github.com/ozan1338/token"
 )
 
 
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"`
 }
 
@@ -36,8 +37,9 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateAccountParams{
-		Owner: req.Owner,
+		Owner: authPayload.Username,
 		Currency: req.Currency,
 		Balance: 0,
 	}
@@ -84,7 +86,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 
 	account := accountStruct{
 		Id: accountId,
-		Owner: req.Owner,
+		Owner: authPayload.Username,
 		Currency: req.Currency,
 		Balance: int64(0),
 	}
@@ -95,6 +97,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 type getAccountRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
+
 
 func (server *Server) getAccountById(ctx *gin.Context) {
 	var req getAccountRequest
@@ -115,6 +118,13 @@ func (server *Server) getAccountById(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if account.Owner != authPayload.Username {
+		err := errors.New("account doesn't belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	ctx.JSON(http.StatusOK, account)
 	return
 }
@@ -131,7 +141,10 @@ func (server *Server) listAccount(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	arg := db.ListAccountParams{
+		Owner: authPayload.Username,
 		Limit: req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
