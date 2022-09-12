@@ -34,6 +34,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&req)
 
 	if err != nil {
+		fmt.Println("ERROR !")
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
@@ -71,15 +72,15 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	userMoreThanOne, err := server.store.UserMoreThanOne(ctx, arg.Username)
+	// userMoreThanOne, err := server.store.UserMoreThanOne(ctx, arg.Username)
 	
-	if userMoreThanOne > 1 {
-		errorRess := errorRes{
-			Error: "Username Already Exist",
-		}
-		ctx.JSON(http.StatusForbidden, errorRess)
-		return
-	}
+	// if userMoreThanOne > 1 {
+	// 	errorRess := errorRes{
+	// 		Error: "Username Already Exist",
+	// 	}
+	// 	ctx.JSON(http.StatusForbidden, errorRess)
+	// 	return
+	// }
 
 	// accountId, err := server.store.GetLastInsertId(ctx)
 	if err != nil {
