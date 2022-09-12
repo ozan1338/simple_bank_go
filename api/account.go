@@ -37,9 +37,9 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		return
 	}
 
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	authPayloadd := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateAccountParams{
-		Owner: authPayload.Username,
+		Owner: authPayloadd.Username,
 		Currency: req.Currency,
 		Balance: 0,
 	}
@@ -86,7 +86,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 
 	account := accountStruct{
 		Id: accountId,
-		Owner: authPayload.Username,
+		Owner: authPayloadd.Username,
 		Currency: req.Currency,
 		Balance: int64(0),
 	}
@@ -142,6 +142,7 @@ func (server *Server) listAccount(ctx *gin.Context) {
 	}
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 
 	arg := db.ListAccountParams{
 		Owner: authPayload.Username,
