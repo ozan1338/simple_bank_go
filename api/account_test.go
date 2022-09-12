@@ -183,12 +183,12 @@ func TestCreateAccount(t *testing.T) {
 		{
 			name: "User Doesnt Exist",
 			body: gin.H{
-				"owner": account.Owner,
+				"owner": "Error",
 				"currency": account.Currency,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.CreateAccountParams{
-					Owner:    account.Owner,
+					Owner:    "Error",
 					Currency: account.Currency,
 					Balance:  0,
 				}
