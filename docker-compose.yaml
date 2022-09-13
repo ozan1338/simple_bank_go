@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql:latest
+    networks:
+      - bank_net
+    environment: 
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=simple_bank
+      - MYSQL_ROOT_PASSWORD=root
+      - DB_USER=root
+      - DB_PASSWORD=root
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - bank_net
+    environment:
+      - DB_SOURCE=root:root@tcp(simple_bank-mysql-1:3306)/simple_bank?parseTime=true
+    depends_on:
+      - mysql
+    entrypoint: [ "/app/wait-for.sh", "simple_bank-mysql-1:3306", "--", "/app/start.sh" ]
+    command: [ "/app/main" ]
+
+networks:
+  bank_net:
