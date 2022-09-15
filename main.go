@@ -23,6 +23,7 @@ func main() {
 		log.Fatal("can't connect db: ", err)
 	}
 
+	
 	store := db.NewStore(conn)
 
 	server,err := api.NewServer(config,store)
