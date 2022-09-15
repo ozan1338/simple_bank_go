@@ -19,11 +19,12 @@ services:
     networks:
       - bank_net
     environment:
-      - DB_SOURCE=mysql://root:root@tcp(mysql:3306)/simple_bank
+      - DB_SOURCE=mysql://root:root@tcp(simple_bank-mysql-1:3306)/simple_bank
     # depends_on:
     #   - mysql
-    # entrypoint: [ "/app/wait-for.sh", "simple_bank-mysql-1:3306", "--", "/app/start.sh" ]
+    # entrypoint: [ "/app/wait-for.sh", "mysql:3306", "--", "/app/start.sh" ]
     # command: [ "/app/main" ]
+    # /app/wait-for.sh simple_bank-mysql-1:3306 -- /app/start.sh /app/main
 
 networks:
   bank_net:
