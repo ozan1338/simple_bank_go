@@ -24,6 +24,8 @@ type createUserRes struct {
 	Email            string       `json:"email"`
 	FullName         string       `json:"full_name"`
 	AccessTokenExpires time.Time `json:"access_token_expired"`
+	PassordChangeAt time.Time `json:"password_change_at"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func newUserRes (user db.User) createUserRes {
