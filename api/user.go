@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	db "github.com/ozan1338/db/sqlc"
 	"github.com/ozan1338/util"
 )
@@ -21,6 +23,7 @@ type createUserRes struct {
 	Username         string       `json:"username"`
 	Email            string       `json:"email"`
 	FullName         string       `json:"full_name"`
+	AccessTokenExpires time.Time `json:"access_token_expired"`
 }
 
 func newUserRes (user db.User) createUserRes {
@@ -122,7 +125,11 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
+	sessionID uuid.UUID `json:"session_id"`
 	AccessToken string `json:"access_token"`
+	AccessTokenExpires time.Time `json:"access_token_expires_at"`
+	RefreshToken string `json:"refresh_token"`
+	RefreshTokenExpires time.Time `json:"refresh_token_expires_at"`
 	User createUserRes `json:"user"`
 }
 
@@ -150,14 +157,47 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	accesToken, err := server.tokenMaker.CreateToken(req.Username, server.config.AccessTokenDuration)
+	accesToken, accesPayload,err := server.tokenMaker.CreateToken(req.Username, server.config.AccessTokenDuration)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
 	}
 
+	refreshToken, refreshPayload,err := server.tokenMaker.CreateToken(
+		user.Username,
+		server.config.RefreshTokenDuration,
+	)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	_,err = server.store.CreateRefreshToken(ctx, db.CreateRefreshTokenParams{
+		ID: refreshPayload.ID,
+		Username: user.Username,
+		RefreshToken: refreshToken,
+		UserAgent: ctx.Request.UserAgent(),//TODO: fill it
+		ClientIp: ctx.ClientIP(),
+		IsBlocked: false,
+		ExpiredAt: refreshPayload.ExpiredAt,
+	})
+	if err != nil {
+		fmt.Println("YOO")
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	// sessionID, err := server.store.GetLastInsertId(ctx)
+	session, err := server.store.GetSession(ctx, refreshPayload.ID)
+
 	rsp := loginUserResponse{
+		sessionID: session.ID,
 		AccessToken: accesToken,
+		AccessTokenExpires: accesPayload.ExpiredAt,
+		RefreshToken: refreshToken,
+		RefreshTokenExpires: refreshPayload.ExpiredAt,
 		User: newUserRes(user),
 	}
 

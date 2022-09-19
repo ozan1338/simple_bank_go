@@ -7,12 +7,14 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/google/uuid"
 )
 
 type Querier interface {
 	AddAccountBalance(ctx context.Context, arg AddAccountBalanceParams) (sql.Result, error)
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (sql.Result, error)
 	CreateEntries(ctx context.Context, arg CreateEntriesParams) (sql.Result, error)
+	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (sql.Result, error)
 	CreateTransfer(ctx context.Context, arg CreateTransferParams) (sql.Result, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (sql.Result, error)
 	DeleteAccount(ctx context.Context, id int64) (sql.Result, error)
@@ -23,6 +25,7 @@ type Querier interface {
 	GetEntries(ctx context.Context, id int64) (Entry, error)
 	GetIdEntries(ctx context.Context) (Entry, error)
 	GetLastInsertId(ctx context.Context) (int64, error)
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTransfer(ctx context.Context, id int64) (Transfer, error)
 	GetUser(ctx context.Context, username string) (User, error)
 	ListAccount(ctx context.Context, arg ListAccountParams) ([]Account, error)
