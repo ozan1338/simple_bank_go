@@ -56,6 +56,32 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 	return i, err
 }
 
+const updateUser = `-- name: UpdateUser :execresult
+UPDATE users
+SET
+    password = COALESCE(?, password),
+    full_name = COALESCE(?, full_name),
+    email = COALESCE(?, email)
+WHERE
+    username = ?
+`
+
+type UpdateUserParams struct {
+	Password sql.NullString `json:"password"`
+	FullName sql.NullString `json:"full_name"`
+	Email    sql.NullString `json:"email"`
+	Username string         `json:"username"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (sql.Result, error) {
+	return q.db.ExecContext(ctx, updateUser,
+		arg.Password,
+		arg.FullName,
+		arg.Email,
+		arg.Username,
+	)
+}
+
 const userExist = `-- name: UserExist :one
 select exists(select username, password, email, full_name, password_change_at, created_at from users where username = ?) as isExist
 `

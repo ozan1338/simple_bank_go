@@ -31,7 +31,8 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 	}
 
 	// sessionID, err := server.store.GetLastInsertId(ctx)
-	session, err := server.store.GetSession(ctx, refreshPayload.ID)
+	// refreshPayloadID := 
+	session, err := server.store.GetSession(ctx, refreshPayload.ID.String())
 
 	if session.IsBlocked {
 		err := fmt.Errorf("blocked Session")

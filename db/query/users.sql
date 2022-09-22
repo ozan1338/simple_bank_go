@@ -16,4 +16,13 @@ WHERE username = ? LIMIT 1;
 select exists(select * from users where username = ?) as isExist;
 
 -- name: UserMoreThanOne :one
-select count(*) from users where username = ?
+select count(*) from users where username = ?;
+
+-- name: UpdateUser :execresult
+UPDATE users
+SET
+    password = COALESCE(sqlc.narg(password), password),
+    full_name = COALESCE(sqlc.narg(full_name), full_name),
+    email = COALESCE(sqlc.narg(email), email)
+WHERE
+    username = sqlc.arg(username);

@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 
 	"github.com/ozan1338/util"
@@ -64,4 +65,29 @@ func TestGetUser(t *testing.T)  {
 	require.Equal(t, arg.Email, user.Email)
 	require.Equal(t, arg.FullName, user.FullName)
 	require.Equal(t, arg.Password, user.Password)
+}
+
+func TestUpdateUser(t *testing.T) {
+	oldUser := CreateRandomUser(t)
+
+	newFullName := util.RandomOwner()
+	_, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
+		Username: oldUser.Username,
+		FullName: sql.NullString{
+			String: newFullName,
+			Valid: true,
+		},
+	})
+
+	require.NoError(t, err)
+
+	newUser,err := testQueries.GetUser(context.Background(), oldUser.Username)
+
+	require.NoError(t, err)
+	require.NotEqual(t, oldUser.FullName, newUser.FullName)
+	require.Equal(t, newFullName, newUser.FullName)
+	require.Equal(t, oldUser.Email, newUser.Email)
+	require.Equal(t, oldUser.Password, newUser.Password)
+
+
 }

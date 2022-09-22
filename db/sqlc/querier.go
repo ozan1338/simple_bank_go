@@ -7,7 +7,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/google/uuid"
 )
 
 type Querier interface {
@@ -25,7 +24,7 @@ type Querier interface {
 	GetEntries(ctx context.Context, id int64) (Entry, error)
 	GetIdEntries(ctx context.Context) (Entry, error)
 	GetLastInsertId(ctx context.Context) (int64, error)
-	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
+	GetSession(ctx context.Context, id string) (Session, error)
 	GetTransfer(ctx context.Context, id int64) (Transfer, error)
 	GetUser(ctx context.Context, username string) (User, error)
 	ListAccount(ctx context.Context, arg ListAccountParams) ([]Account, error)
@@ -34,6 +33,7 @@ type Querier interface {
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (sql.Result, error)
 	UpdateEntries(ctx context.Context, arg UpdateEntriesParams) (sql.Result, error)
 	UpdateTransfer(ctx context.Context, arg UpdateTransferParams) (sql.Result, error)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (sql.Result, error)
 	UserExist(ctx context.Context, username string) (bool, error)
 	UserMoreThanOne(ctx context.Context, username string) (int64, error)
 }

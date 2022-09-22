@@ -9,8 +9,6 @@ import (
 	"context"
 	"database/sql"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const createRefreshToken = `-- name: CreateRefreshToken :execresult
@@ -28,7 +26,7 @@ INSERT INTO sessions (
 `
 
 type CreateRefreshTokenParams struct {
-	ID           uuid.UUID    `json:"id"`
+	ID           string    `json:"id"`
 	Username     string    `json:"username"`
 	RefreshToken string    `json:"refresh_token"`
 	UserAgent    string    `json:"user_agent"`
@@ -54,7 +52,7 @@ SELECT id, username, refresh_token, user_agent, client_ip, is_blocked, expired_a
 WHERE id = ? LIMIT 1
 `
 
-func (q *Queries) GetSession(ctx context.Context, id uuid.UUID) (Session, error) {
+func (q *Queries) GetSession(ctx context.Context, id string) (Session, error) {
 	row := q.db.QueryRowContext(ctx, getSession, id)
 	var i Session
 	err := row.Scan(

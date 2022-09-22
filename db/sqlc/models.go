@@ -7,8 +7,6 @@ package db
 import (
 	"database/sql"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Account struct {
@@ -28,7 +26,7 @@ type Entry struct {
 }
 
 type Session struct {
-	ID           uuid.UUID       `json:"id"`
+	ID           string       `json:"id"`
 	Username     string       `json:"username"`
 	RefreshToken string       `json:"refresh_token"`
 	UserAgent    string       `json:"user_agent"`

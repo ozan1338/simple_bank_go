@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	db "github.com/ozan1338/db/sqlc"
 	"github.com/ozan1338/util"
 )
@@ -127,7 +126,7 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	sessionID uuid.UUID `json:"session_id"`
+	sessionID string `json:"session_id"`
 	AccessToken string `json:"access_token"`
 	AccessTokenExpires time.Time `json:"access_token_expires_at"`
 	RefreshToken string `json:"refresh_token"`
@@ -177,7 +176,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	_,err = server.store.CreateRefreshToken(ctx, db.CreateRefreshTokenParams{
-		ID: refreshPayload.ID,
+		ID: refreshPayload.ID.String(),
 		Username: user.Username,
 		RefreshToken: refreshToken,
 		UserAgent: ctx.Request.UserAgent(),//TODO: fill it
@@ -192,7 +191,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	// sessionID, err := server.store.GetLastInsertId(ctx)
-	session, err := server.store.GetSession(ctx, refreshPayload.ID)
+	session, err := server.store.GetSession(ctx, refreshPayload.ID.String())
 
 	rsp := loginUserResponse{
 		sessionID: session.ID,
